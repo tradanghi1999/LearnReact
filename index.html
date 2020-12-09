@@ -1,0 +1,252 @@
+<! DOCTYPE html>
+
+    <html>
+
+    <head>
+
+        <meta charset="UTF-8" />
+
+        <title> React [RU] Tutorial </title>
+
+        <script src="https://unpkg.com/react@16/umd/react.development.js">
+        </script>
+
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js">
+        </script>
+        <script src="https://unpkg.com/prop-types@15.6/prop-types.js"> </script>
+
+        <! - Don't use this in production ->
+
+            <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js">
+            </script>
+            <style>
+                .red {
+                    color: #f00;
+                }
+
+                .none {
+                    display: none;
+                }
+
+                body {
+
+                    background: rgba(0, 102, 255, 0.38);
+
+                    font-family: sans-serif;
+
+                }
+
+                p {
+                    margin: 0 0 5px;
+                }
+
+                .article {
+
+                    background: #FFF;
+
+                    border: 1px solid rgba(0, 89, 181, 0.82);
+
+                    width: 600px;
+
+                    margin: 0 0 5px;
+
+                    box-shadow: 2px 2px 5px -1px rgb(0, 81, 202);
+
+                    padding: 3px 5px;
+
+                }
+
+                .news_author {
+
+                    text-decoration: underline;
+
+                    color: #007DDC;
+
+                }
+
+                .news_count {
+
+                    margin: 10px 0 0 0;
+
+                    display: block;
+
+                }
+            </style>
+    </head>
+
+    <body>
+
+        <div id="root"> </div>
+
+        <script type="text/babel">
+            const myNews = [
+
+                {
+
+                    id: 1,
+
+                    author: 'Sasha Pechkin',
+
+                    text: 'Thursday 4th ...',
+
+                    bigText: 'at four and a quarter o\'clock four black dirty little imp were drawing black ink blueprint. '
+
+                },
+
+                {
+
+                    id: 2,
+
+                    author: 'Just Vasya',
+
+                    text: 'I think $ should be worth 35 rubles!',
+
+                    bigText: 'And the euro 42!'
+
+                },
+
+                {
+
+                    id: 3,
+
+                    author: 'Max Frontend',
+
+                    text: 'It\'s been 2 years since previous tutorials, and $ still isn\'t worth 35',
+
+                    bigText: 'And the euro is again above 70.'
+
+                },
+
+                {
+
+                    id: 4,
+
+                    author: 'Guest',
+
+                    text: 'Free. Without SMS, about react, come in - https://maxpfrontend.ru ',
+
+                    bigText: 'There is also a VK group, a telegram and a youtube channel! All infa on the site, not p advertising! '
+
+                }
+
+            ];
+
+            class Article extends React.Component {
+                state = {
+                    visible: false, // define the initial state
+                }
+                handleReadMoreClck = (e) => { // added method
+                    e.preventDefault()
+                    this.setState({ visible: true })
+                }
+                render() {
+
+                    const { author, text, bigText } = this.props.data
+                    const { visible } = this.state
+                    return (
+                        <div className='article'>
+                            <p className='news_author'>{author}</p>
+                            <p className='news_text'>{text}</p>
+                            {
+                                !visible && <a href="#" onClick={this.handleReadMoreClck} className='news_readmore'>More</a>
+                            }
+                            {
+                                visible && <p className='news_big_text'>{bigText}</p>
+                            }
+
+                        </div>
+                    )
+                }
+            }
+
+            Article.propTypes = {
+
+                data: PropTypes.shape({
+
+                    author: PropTypes.string.isRequired,
+
+                    text: PropTypes.string.isRequired
+
+                })
+
+            }
+            class News extends React.Component {
+                state = {
+
+                    counter: 0, // added the property counter (counter)
+
+                }
+
+                handleCounter = () => { // added a new method
+
+                    this.setState({ counter: ++this.state.counter }) // in which we increment the counter
+
+                }
+                renderNews = () => {
+                    const { data } = this.props;
+                    let newsTemplate = null
+                    if (data.length) {
+                        newsTemplate = this.props.data.map(function (x, i) {
+                            return (
+                                <Article key={x.id} data={x} />
+                            )
+                        })
+                    }
+                    else {
+                        newsTemplate = <p>Sorry, no news</p>
+                    }
+                    return newsTemplate
+                }
+                render() {
+                    const {counter} = this.state // pulled out counter
+                    const { data } = this.props;
+                    return (
+                        <div className="news">
+                            {this.renderNews()}
+                            <strong onClick={this.handleCounter} className={data.length <= 0 ? 'none' : 'news_count'}>Total news: {data.length}</strong>
+                            <p>Total Clicks: {counter}</p>
+                        </div>
+                    )
+
+
+                }
+            }
+
+            News.propTypess = {
+                data: PropTypes.array.isRequired
+            }
+            const Comments = () => {
+                return <p>No news - nothing to comment.</p>
+            }
+            const App = () => {
+                return <React.Fragment>
+                    <News data={myNews} />
+                    <Comments />
+                </React.Fragment>
+            }
+            ReactDOM.render(
+                <App />,
+                document.getElementById('root')
+            );
+            // class BigApp extends React.Component {
+            //     render() {
+            //         return <React.Fragment>
+            //             <h1>I am a component, BigApp</h1>
+            //             <p className="red">Hello Within BigApp</p>
+            //             <App />
+            //             <News />
+            //         </React.Fragment>
+            //     }
+            // }
+
+            // ReactDOM.render(
+            //     <BigApp />,
+            //     document.getElementById("root")
+            // )
+
+
+        </script>
+        <p>Stateful Class vs stateless component Function </p>
+    </body>
+
+    </html>
