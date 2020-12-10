@@ -71,6 +71,47 @@
                     display: block;
 
                 }
+
+                .test-input {
+
+                    margin: 0 5px 5px 0;
+
+                }
+
+                .add {
+
+                    margin: 0 5px 5px 0;
+
+                    width: 210px;
+
+                    border: 1px dashed rgba (0, 89, 181, 0.82);
+
+                    padding: 5px;
+
+                }
+
+                .add_author,
+                .add_text,
+                .add_btn,
+                .add_checkrule {
+                    display: block;
+                    margin: 0 0 5px 0;
+                    padding: 5px;
+                    width: 94%;
+                    border: 1px solid rgba (0, 89, 181, 0.82);
+                }
+
+                .add_btn {
+                    box-sizing: content-box;
+                    color: #FFF;
+                    text-transform: uppercase;
+                    background: #007DDC;
+                }
+
+                .add_btn:disabled {
+                    background: #CCC;
+                    color: #999;
+                }
             </style>
     </head>
 
@@ -198,7 +239,7 @@
                     return newsTemplate
                 }
                 render() {
-                    const {counter} = this.state // pulled out counter
+                    const { counter } = this.state // pulled out counter
                     const { data } = this.props;
                     return (
                         <div className="news">
@@ -218,12 +259,129 @@
             const Comments = () => {
                 return <p>No news - nothing to comment.</p>
             }
-            const App = () => {
-                return <React.Fragment>
-                    <News data={myNews} />
-                    <Comments />
-                </React.Fragment>
+
+            class TestInput extends React.Component {
+                // state = {
+                //     myValue: ''
+                // }
+                constructor(props) {
+                    super(props)
+                    this.input = React.createRef()
+                }
+
+                onChangeHandler = (e) => {
+                    this.setState({ myValue: e.currentTarget.value })
+                }
+                onBtnClick = (e) => {
+                    alert(this.input.current.value)
+                }
+                // componentDidMount(){
+                //     this.input.current.focus()
+                // }
+                render() {
+                    return (
+                        <React.Fragment>
+                            <input
+                                className='test-input'
+                                // onChange={this.onChangeHandler}
+                                // value={this.state.myValue}
+                                defaultValue=''
+                                placeholder='enter-value'
+                                ref={this.input} />
+                            <button onClick={this.onBtnClick}>Alert</button>
+                        </React.Fragment>
+                    )
+                }
             }
+
+            class Add extends React.Component {
+                state = { // added the initial state
+                    name: '',
+                    text: '',
+                    agree: false,
+                }
+                validate = () => {
+                    const { name, text, agree } = this.state
+                    if (name.trim() && text.trim() && agree) {
+                        return true
+                    }
+                    return false
+                }
+                handleNameChange = (e) => {
+                    this.setState({ name: e.currentTarget.value })
+                }
+
+                handleTextChange = (e) => {
+                    this.setState({ text: e.currentTarget.value })
+                }
+
+                handleCheckboxChange = (e) => { // handler for clicks on the checkbox
+                    // read the checked property to set true / false
+                    this.setState({ agree: e.currentTarget.checked })
+                }
+
+                onBtnClickHandler = (e) => {
+                    e.preventDefault()
+                    const { name, text } = this.state
+                    //alert(name + '\ n' + text)
+                    this.props.onAddNews({ name, text })
+                }
+                render() {
+                    const { name, text } = this.state
+                    return (
+                        <form className='add'>
+                            <input type="text"
+                                onChange={this.handleNameChange}
+                                className='add_author'
+                                placeholder='Your name'
+                                value={name} />
+                            <textarea
+                                onChange={this.handleTextChange}
+                                className="add_text"
+                                placeholder="News text"
+                                value={text}
+                            ></textarea>
+                            <label className='add_checkrule'>
+                                <input type='checkbox' /> I agree with the rules
+                            </label>
+                            <button className='add_btn'
+                                onClick={this.onBtnClickHandler}
+                            >
+                                Show alert
+                            </button>
+                        </form>
+                    )
+                }
+            }
+
+            class App extends React.Component {
+
+                state = {
+                    news: myNews,
+                }
+                handleAddNews = (data) => {
+                    let addNew = {
+                        id: this.state.news.length + 1,
+                        author: data.name,
+                        text: data.text,
+                        bigText: data.text
+                    }
+                    //console.log( 'I was called from Add, but I have access to this.state from App!' , this.state)
+                    const nextNews = [addNew, ...this.state.news]
+                    this.setState({ news: nextNews })
+                }
+                render() {
+                    return <React.Fragment>
+                        <h3>News</h3>
+                        <Add onAddNews={this.handleAddNews} />
+                        <News data={this.state.news} />
+                        <Comments />
+                    </React.Fragment>
+                }
+            }
+
+
+
             ReactDOM.render(
                 <App />,
                 document.getElementById('root')
