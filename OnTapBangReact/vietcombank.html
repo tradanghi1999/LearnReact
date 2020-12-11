@@ -1,0 +1,200 @@
+<! DOCTYPE html>
+
+    <html>
+
+    <head>
+
+        <meta charset="UTF-8" />
+
+        <title> React VietCombank </title>
+
+        <script src="https://unpkg.com/react@16/umd/react.development.js">
+        </script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js">
+        </script>
+        <script src="https://unpkg.com/prop-types@15.6/prop-types.js"> </script>
+        <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js">
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="x2json.js"></script>
+        <style>
+            * {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-size: 12px;
+            }
+
+            th,
+            td {
+                border-bottom: black 1px solid;
+                padding: 10px;
+            }
+
+            table {
+                border-collapse: collapse;
+
+                overflow: hidden;
+
+            }
+
+            tbody {
+                border-radius: 10px;
+                
+            }
+
+            th {
+                background-color: #fffdd0;
+            }
+
+            tr:nth-child(2n+1) {
+                background-color: whitesmoke;
+            }
+
+            tr:nth-last-child() td {
+                border: none;
+            }
+
+            tr:hover {
+                background-color: #fffdd0;
+                cursor: pointer;
+                font-weight: 600;
+
+            }
+
+
+            th:nth-child(5n),
+            th:nth-child(5n+4) {
+                min-width: 70px;
+            }
+
+            th:nth-child(5n+3) {
+                min-width: 150px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="root"></div>
+        <script>
+            let ajax = {
+                get(url) {
+                    return $.ajax({
+                        url: url,
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        type: "GET",
+                        dataType: "xml"
+                    })
+                }
+            }
+
+            let url = "https://portal.vietcombank.com.vn/Usercontrols/TVPortal.TyGia/pXML.aspx?b=68"
+
+
+
+        </script>
+        <script type="text/babel">
+            class MoneyRow extends React.Component {
+                render() {
+                    const { no, code, name, buy, sell } = this.props.data
+                    return (
+                        <tr>
+                            <td>{no}</td>
+                            <td>{code}</td>
+                            <td>{name}</td>
+                            <td>{buy}</td>
+                            <td>{sell}</td>
+                        </tr>
+                    )
+                }
+            }
+
+            class MoneyTable extends React.Component {
+
+                render() {
+                    const { moneys } = this.props.data
+                    let rows = moneys.map(function (x, i) {
+                        let rowData = {
+                            no: (i + 1),
+                            code: x.code,
+                            name: x.name,
+                            buy: x.buy,
+                            sell: x.sell
+                        }
+
+                        return <MoneyRow key={i + 1} data={rowData} />
+                    })
+
+                    return (
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Mã Tiền Tệ</th>
+                                    <th>Tên Đồng Tiền</th>
+                                    <th>Mua</th>
+                                    <th>Bán</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {rows}
+                            </tbody>
+                        </table>
+                    )
+                }
+            }
+
+            class App extends React.Component {
+                state = {
+                    isLoading: true,
+                    moneys: null
+                }
+
+                componentDidMount() {
+                    ajax.get(url)
+                        .then(async data => data.getElementsByTagName("Exrate"))
+                        .then(async xmls => Array.from(xmls).map(xml => {
+                            return {
+                                code: xml.attributes["CurrencyCode"].value,
+                                name: xml.attributes["CurrencyName"].value,
+                                buy: xml.attributes["Buy"].value,
+                                sell: xml.attributes["Sell"].value
+                            }
+                        }))
+                        .then(async moneys => {
+                            this.setState({
+                                isLoading: false,
+                                moneys: moneys
+                            })
+                        })
+                }
+                render() {
+                    const { isLoading } = this.state
+                    if (isLoading)
+                        return <div>ToLo</div>
+                    const { moneys } = this.state
+                    let d = { moneys: moneys }
+                    return <MoneyTable data={d} />
+                }
+            }
+
+            ReactDOM.render(
+                <App />,
+                document.getElementById("root")
+            )
+
+
+
+            // dtPromise.then(moneys =>{
+            //     ReactDOM.render(
+            //         <MoneyTable data={moneys} />,
+            //         document.getElementById('root')
+            //     )
+            // })
+
+
+        </script>
+        <p>Stateful Class vs stateless component Function </p>
+    </body>
+
+    </html>
