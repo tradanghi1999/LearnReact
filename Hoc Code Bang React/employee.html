@@ -16,6 +16,7 @@
         <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js">
         </script>
         <link rel="stylesheet" href="table.css" />
+        <link rel="stylesheet" href="option.css" />
         <style>
 
         </style>
@@ -80,22 +81,28 @@
             }
 
             class TitleFilter extends React.Component {
+
                 render() {
                     const { title } = this.props.data
-                    return(
+                    return (
                         <option value={title}>{title}</option>
                     )
                 }
             }
             class FilterDrop extends React.Component {
+
+                onChangeHandler = (e) => {
+                    let type = e.target.value == "" ? null : e.target.value
+                    this.props.onFilterChange({ type })
+                }
                 render() {
                     const { types } = this.props.data
-                    let options = types.map(function(x,i){
-                        return <TitleFilter data={{title:x}}/>
+                    let options = types.map(function (x, i) {
+                        return <TitleFilter key={i + 1} data={{ title: x }} />
                     })
                     return (
-                        <select>
-                        <option value="">-Select Title-</option>
+                        <select onChange={this.onChangeHandler}>
+                            <option value="">-Select Title-</option>
                             {options}
                         </select>
                     )
@@ -105,8 +112,17 @@
                 state = {
                     isLoading: true,
                     data: null,
-                    types: null
+                    types: null,
+                    typeChosen: null
                 }
+
+                onSelectType = (data) => {
+                    this.setState({
+                        isLoading: false,
+                        typeChosen: data.type
+                    })
+                }
+
                 componentDidMount() {
                     rxjs.from(ajax.getXML(url))
                         .pipe(
@@ -138,15 +154,25 @@
                         })
                 }
                 render() {
-                    const { isLoading, data, types } = this.state
+                    const { isLoading, data, types, typeChosen } = this.state
                     if (isLoading)
-                        return <div>Chua Load Xong</div>
-                    let tableData = {
-                        rowDatas: data
-                    }
+                        return
+                    <React.Fragment>
+                        <img src={"loading.svg"} />
+                    </React.Fragment>
+
+
+                    let tableData = (typeChosen != null) ?
+                        {
+                            rowDatas: data.filter(x => x.title == typeChosen)
+                        } :
+                        {
+                            rowDatas: data
+                        };
+
                     return (
                         <React.Fragment>
-                            <FilterDrop data={{ types: types }} />
+                            <FilterDrop onFilterChange={this.onSelectType} data={{ types: types }} />
                             <CustomerTable data={tableData} />
                         </React.Fragment>
                     )
