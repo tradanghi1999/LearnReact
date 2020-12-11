@@ -1,0 +1,163 @@
+<! DOCTYPE html>
+
+    <html>
+
+    <head>
+
+        <meta charset="UTF-8" />
+        <title> React Employee </title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.6.3/rxjs.umd.min.js"></script>
+        <script src="https://unpkg.com/react@16/umd/react.development.js">
+        </script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js">
+        </script>
+        <script src="https://unpkg.com/prop-types@15.6/prop-types.js"> </script>
+        <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js">
+        </script>
+        <link rel="stylesheet" href="table.css" />
+        <style>
+
+        </style>
+    </head>
+
+    <body>
+
+        <div id="root"> </div>
+
+        <script>
+            let ajax = {
+                getXML(url) {
+                    return $.ajax({
+                        url: url,
+                        dataType: "xml"
+                    })
+                }
+            }
+
+            let url = 'https://raw.githubusercontent.com/tradanghi1999/BeDumpOnceAndAlways/master/BaiTapLop14_09_2019_K174111261_TranDaiNghia/BaiTapLop14_09_2019_K174111261_TranDaiNghia/Module%206/Bai%2008/Employee.xml'
+
+        </script>
+        <script type="text/babel">
+            class CustomerRow extends React.Component {
+                onClickHandler = (e) => {
+
+                }
+                render() {
+                    const { id, title, name, phone } = this.props.data;
+                    return (
+                        <tr onClick={this.onClickHandler}>
+                            <td>{id}</td>
+                            <td>{title}</td>
+                            <td>{name}</td>
+                            <td>{phone}</td>
+                        </tr>
+                    )
+                }
+            }
+            class CustomerTable extends React.Component {
+                render() {
+                    const { rowDatas } = this.props.data
+                    let rows = rowDatas.map(function (x, i) {
+                        return <CustomerRow key={i + 1} data={x} />
+                    })
+                    return (
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Nghề</th>
+                                    <th>Tên</th>
+                                    <th>Số Điện Thoại</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {rows}
+                            </tbody>
+                        </table>
+                    )
+                }
+            }
+
+            class TitleFilter extends React.Component {
+                render() {
+                    const { title } = this.props.data
+                    return(
+                        <option value={title}>{title}</option>
+                    )
+                }
+            }
+            class FilterDrop extends React.Component {
+                render() {
+                    const { types } = this.props.data
+                    let options = types.map(function(x,i){
+                        return <TitleFilter data={{title:x}}/>
+                    })
+                    return (
+                        <select>
+                        <option value="">-Select Title-</option>
+                            {options}
+                        </select>
+                    )
+                }
+            }
+            class App extends React.Component {
+                state = {
+                    isLoading: true,
+                    data: null,
+                    types: null
+                }
+                componentDidMount() {
+                    rxjs.from(ajax.getXML(url))
+                        .pipe(
+                            rxjs.operators.map(xml => xml.getElementsByTagName("Employee")),
+                            rxjs.operators.map(xmls => {
+                                let items = []
+                                for (let i = 0; i < xmls.length; i++) {
+                                    items.push({
+                                        id: xmls[i].attributes['id'].value,
+                                        title: xmls[i].attributes['title'].value,
+                                        name: xmls[i].children[0].innerHTML,
+                                        phone: xmls[i].children[1].innerHTML
+                                    })
+                                }
+                                return items
+                            })
+                        )
+                        .subscribe(data => {
+                            const unique = (value, index, self) => {
+                                return self.indexOf(value) === index
+                            }
+                            let types = data.map(x => x.title)
+                                .filter(unique)
+                            this.setState({
+                                isLoading: false,
+                                data: data,
+                                types: types
+                            })
+                        })
+                }
+                render() {
+                    const { isLoading, data, types } = this.state
+                    if (isLoading)
+                        return <div>Chua Load Xong</div>
+                    let tableData = {
+                        rowDatas: data
+                    }
+                    return (
+                        <React.Fragment>
+                            <FilterDrop data={{ types: types }} />
+                            <CustomerTable data={tableData} />
+                        </React.Fragment>
+                    )
+                }
+            }
+            ReactDOM.render(
+                <App />,
+                document.getElementById("root")
+            )
+        </script>
+
+    </body>
+
+    </html>
