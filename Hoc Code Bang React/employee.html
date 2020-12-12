@@ -18,7 +18,30 @@
         <link rel="stylesheet" href="table.css" />
         <link rel="stylesheet" href="option.css" />
         <style>
+            .fieldContainer {
+                display: flex;
+                padding: 5px;
+            }
+            .fieldContainer div {
+                
+                padding: 0 5px;
+            }
+            .fieldContainer div:nth-child(1) {
+                
+                font-weight: 500;
+            }
 
+            .details {
+                border-radius: 5px;
+                padding: 50px;
+                width: 270px;
+                height: 100px;
+                font-size: 14px;
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+                border: 1px solid black;
+                margin: 15px 0;
+                box-shadow: 5px 9px lightgrey;
+            }
         </style>
     </head>
 
@@ -42,7 +65,9 @@
         <script type="text/babel">
             class CustomerRow extends React.Component {
                 onClickHandler = (e) => {
-
+                    e.preventDefault()
+                    const { id, title, name, phone } = this.props.data
+                    this.props.onClickEmployee({ name, title, phone })
                 }
                 render() {
                     const { id, title, name, phone } = this.props.data;
@@ -57,10 +82,23 @@
                 }
             }
             class CustomerTable extends React.Component {
+                onClick = (data) => {
+                    this.props.onClickEmployee({ data })
+                }
+
                 render() {
+                    const onClick = this.onClick
                     const { rowDatas } = this.props.data
                     let rows = rowDatas.map(function (x, i) {
-                        return <CustomerRow key={i + 1} data={x} />
+                        return (
+                            <CustomerRow
+                                key={i + 1}
+                                data={x}
+                                onClickEmployee={onClick}
+
+                            />
+                        )
+
                     })
                     return (
                         <table>
@@ -108,12 +146,48 @@
                     )
                 }
             }
+
+            class EmployeeDetail extends React.Component {
+
+                state = {
+                    name: null,
+                    title: null,
+                    phone: null
+                }
+
+                render() {
+                    const { name, title, phone } = this.props.data
+                    return (
+                        <React.Fragment>
+                            <div className='details'>
+                                <div className="fieldContainer">
+                                    <div>Tên Nhân Viên:</div>
+                                    <div>{name}</div>
+                                </div>
+                                <div className="fieldContainer">
+                                    <div>Nghề Nghiệp:</div>
+                                    <div>{title}</div>
+                                </div>
+                                <div className="fieldContainer">
+                                    <div>Liên Lạc:</div>
+                                    <div>{phone}</div>
+                                </div>
+                            </div>
+                        </React.Fragment>
+                    )
+                }
+            }
             class App extends React.Component {
                 state = {
                     isLoading: true,
                     data: null,
                     types: null,
-                    typeChosen: null
+                    typeChosen: null,
+                    details: {
+                        name: null,
+                        title: null,
+                        phone: null
+                    }
                 }
 
                 onSelectType = (data) => {
@@ -122,6 +196,15 @@
                         typeChosen: data.type
                     })
                 }
+
+                onClick = (data) => {
+                    this.setState({
+                        isLoading: false,
+                        details: data.data
+                    })
+                }
+
+
 
                 componentDidMount() {
                     rxjs.from(ajax.getXML(url))
@@ -150,16 +233,19 @@
                                 isLoading: false,
                                 data: data,
                                 types: types
-                            })
+
+                            }) 
                         })
                 }
                 render() {
-                    const { isLoading, data, types, typeChosen } = this.state
+                    const { isLoading, data, types, typeChosen, details } = this.state
                     if (isLoading)
-                        return
-                    <React.Fragment>
-                        <img src={"loading.svg"} />
-                    </React.Fragment>
+                        return (
+                            <React.Fragment>
+                                <img src="https://raw.githubusercontent.com/tradanghi1999/LearnReact/main/Hoc%20Code%20Bang%20React/loading.svg" />
+                            </React.Fragment>
+                        )
+
 
 
                     let tableData = (typeChosen != null) ?
@@ -172,8 +258,14 @@
 
                     return (
                         <React.Fragment>
-                            <FilterDrop onFilterChange={this.onSelectType} data={{ types: types }} />
-                            <CustomerTable data={tableData} />
+                            <FilterDrop
+                                onFilterChange={this.onSelectType}
+                                data={{ types: types }} />
+                            <CustomerTable
+                                data={tableData}
+                                onClickEmployee={this.onClick}
+                            />
+                            <EmployeeDetail data={details}/>
                         </React.Fragment>
                     )
                 }

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="table.css" />
+    <link rel="stylesheet" href="option.css" />
+    <title> React Employee </title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.6.3/rxjs.umd.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.4.4/babel.js"></script>
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <!--     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.js"></script> -->
+
+    <script>
+        Babel.registerPreset("my-preset", {
+            presets: [
+                [Babel.availablePresets["es2015"], { "modules": false }],
+                [Babel.availablePresets["react"]]
+
+            ],
+            plugins: [
+                [Babel.availablePlugins["transform-modules-umd"]]
+            ],
+            moduleId: "main"
+        });
+    </script>
+
+    <script src="https://unpkg.com/prop-types@15.6/prop-types.js"> </script>
+
+
+
+</head>
+
+<body>
+    <div id="root"></div>
+    <script>
+        let ajax = {
+            getXML(url) {
+                return $.ajax({
+                    url: url,
+                    dataType: "xml"
+                })
+            }
+        }
+
+        let url = 'https://raw.githubusercontent.com/tradanghi1999/BeDumpOnceAndAlways/master/BaiTapLop14_09_2019_K174111261_TranDaiNghia/BaiTapLop14_09_2019_K174111261_TranDaiNghia/Module%206/Bai%2008/Employee.xml'
+
+    </script>
+    <!-- <script src="index.js" type="text/babel" data-type="module">     -->
+    <script type="text/babel" src="./app.js" data-plugins="transform-modules-umd"></script>
+    <script type="text/babel" data-presets="my-preset">
+        import App from "./app"
+        ReactDOM.render(<App />, document.getElementById("root"))
+        //ReactDOM.render(<CustomerRow id='hi'/>, document.getElementById("root"));
+    </script>
+
+</body>
+
+</html>
