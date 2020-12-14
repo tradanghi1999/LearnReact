@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="timeline.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css" />
+</head>
+
+<body class="no-select">
+    <div class="vrp-header-container">
+        <div class="dr-header-containter">
+            <div class="dr-name-header">Tên Tài Xế</div>
+            <div class="dr-total">
+                <div>Tổng chuyến</div>
+                <div class="total-details">
+                    <div>(Tháng)</div>
+                    <div>(Ngày)</div>
+                </div>
+            </div>
+
+        </div>
+        <div class="capacity-header-container">
+            Trọng tải
+        </div>
+        <div class="timeline-display">
+            <div class="timeline-header">
+                <div> </div>
+                <div>Timeline</div>
+                <div class="ulti">
+                    <div class="hide-btn">
+                        <i class="fas fa-angle-double-down"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline-content">
+                <div class="time-point">8h</div>
+                <div class="time-point">8h15</div>
+                <div class="time-point">8h30</div>
+                <div class="time-point">8h45</div>
+                <div class="time-point">9h</div>
+                <div class="time-point">9h15</div>
+                <div class="time-point">9h30</div>
+                <div class="time-point">9h45</div>
+            </div>
+        </div>
+
+    </div>
+    <div class="vrp-container">
+        <div class="tln-container">
+            <div class="un-tln"></div>
+            <div class="tln">
+                <div class="tln-period">
+                    <div></div>
+                </div>
+                <div class="tln-period">
+                    <div></div>
+                </div>
+                <div class="tln-period">
+                    <div></div>
+                </div>
+                <div class="tln-period">
+                    <div></div>
+                </div>
+                <div class="tln-period">
+                    <div></div>
+                </div>
+                <div class="tln-period">
+                    <div></div>
+                </div>
+                <div class="tln-period">
+                    <div></div>
+                </div>
+                <div class="tln-period">
+                    <div></div>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="rt-manual" id="manuel">
+            <div class="routing-container">
+                <div class="dr-container">
+                    <div class="dr-name">Nghia</div>
+                    <div class="dr-total-route">33</div>
+                    <div class="dr-today-route">1</div>
+                </div>
+                <div class="capacity-container">
+                    <div class="capacity-percentage">
+                        <div class="present"></div>
+                        <div class="expected"></div>
+                    </div>
+                    <div class="capacity-number">
+                        <div class="present">50%</div>
+                        <div class="add"></div>
+                    </div>
+                </div>
+                <div class="rt-container">
+                    <div class="rt-depot">
+                        <i class="fas fa-warehouse"></i>
+                    </div>
+                    <div class="rt-link">
+                        <div class="rt-shiptime">15'</div>
+                        <div class="rt-line"></div>
+                    </div>
+                    <div class="rt-cus">
+                        <div class="rt-cus-name">Anh Hiếu</div>
+                    </div>
+
+                    <div class="rt-link ">
+                        <div class="rt-shiptime">15'</div>
+                        <div class="rt-line rt-line-preview"></div>
+                    </div>
+
+                    <div class="rt-cus">
+                        <div class="rt-cus-name">Chị Xuyến</div>
+                    </div>
+
+                    <div class="rt-link ">
+                        <div class="rt-shiptime">15'</div>
+                        <div class="rt-line rt-line-preview"></div>
+                    </div>
+
+                    <div class="rt-cus">
+                        <div class="rt-cus-name">Anh Hiếu</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="routing-container">
+                <div class="dr-container">
+                    <div class="dr-name">Nghia</div>
+                    <div class="dr-total-route">33</div>
+                    <div class="dr-today-route">1</div>
+                </div>
+                <div class="capacity-container">
+                    <div class="capacity-percentage">
+                        <div class="present"></div>
+                        <div class="expected"></div>
+                    </div>
+                    <div class="capacity-number">
+                        <div class="present">50%</div>
+                        <div class="add"></div>
+                    </div>
+                </div>
+                <div class="rt-container">
+                    <div class="rt-depot">
+                        <i class="fas fa-warehouse"></i>
+                    </div>
+                    <div class="rt-link">
+                        <div class="rt-shiptime">15'</div>
+                        <div class="rt-line"></div>
+                    </div>
+                    <div class="rt-cus" style="width:50px;">
+                        <div class="rt-cus-name">Anh Hiếu</div>
+                    </div>
+
+                    <div class="rt-link ">
+                        <div class="rt-shiptime">15'</div>
+                        <div class="rt-line rt-line-preview"></div>
+                    </div>
+
+                    <div class="rt-cus  rt-cus-preview">
+                        <div class="rt-cus-name">Chị Xuyến</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="routing-container">
+                <div class="dr-container">
+                    <div class="dr-name">Nghia</div>
+                    <div class="dr-total-route">33</div>
+                    <div class="dr-today-route">1</div>
+                </div>
+                <div class="capacity-container">
+                    <div class="capacity-percentage">
+                        <div class="present"></div>
+                        <div class="expected"></div>
+                    </div>
+                    <div class="capacity-number">
+                        <div class="present">50%</div>
+                        <div class="add"></div>
+                    </div>
+                </div>
+                <div class="rt-container" id="d-rt-container">
+                    <div class="rt-depot">
+                        <i class="fas fa-warehouse"></i>
+                    </div>
+                    <div class="rt-link">
+                        <div class="rt-shiptime">15'</div>
+                        <div class="rt-line"></div>
+                    </div>
+                    <div class="rt-cus rt-cus-mini" style="width:20px">
+                        <div class="rt-cus-name">Anh Hiếu</div>
+                    </div>
+
+                    <div class="rt-link ">
+                        <div class="rt-shiptime">15'</div>
+                        <div class="rt-line rt-line-preview"></div>
+                    </div>
+
+                    <div class="rt-cus  rt-cus-preview">
+                        <div class="rt-cus-name">Chị Xuyến</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+        let pos = $("#im").position()
+        $(".rt-cus").draggable({
+            containment: ".rt-manual",
+            scroll: false,
+            cursor: "move",
+            helper: "clone",
+            drag: function(event, ui) {
+                ui.helper.prevObject[0].classList.add("rt-cus-preview")
+            },
+            stop: function(event, ui) {
+                ui.helper.prevObject[0].classList.remove("rt-cus-preview")
+            }
+        })
+    </script>
+    <script src="rt-manual.js"></script>
+    <script src="ajax.js"></script>
+    <script src="vrp_thang.js"></script>
+    <script src="ids.js"></script>
+    <script src="drivers.js"></script>
+    <script>
+        let d_rt_container = document.getElementById("d-rt-container")
+        let manuel = document.getElementById("manuel")
+        let vehicles = {
+            weight_limit: 30,
+            number: 8
+        }
+
+
+
+        ajax.getDb("https://mwg-vrp.herokuapp.com/create/random/vehicles")
+            .then(db => {
+                vrp_thang.import(db, ids, vehicles)
+                let routes = vrp_thang.run()
+
+                manual.setGraphicMode(100)
+                manual.prepare()
+                manual.importData(vehicles, drivers, ids, db, routes)
+                    //d_rt_container.appendChild()
+                manuel.appendChild(manual.createRoute(0))
+
+            })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        td {
+            text-align: center;
+        }
+        
+        .links line {
+            stroke: #999;
+            stroke-opacity: 0.6;
+        }
+        
+        .nodes circle {
+            stroke: #000;
+            stroke-width: 1px;
+            width: 1px;
+            height: 1px;
+        }
+        
+        text {
+            font-family: sans-serif;
+            font-size: 4px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+    <link rel="stylesheet" href="routetbl.css">
+</head>
+
+<body>
+
+
+    <script>
+        function toTravelTable(db, ids) {
+            return ids
+                .map(function(x, i) {
+                    return '<tr>' +
+                        (i == 0 ? "<th>" + 'Kho' + "</th>" : "<th>" + x.id + "</th>") +
+                        db[i].timetravels.map(function(y, j) {
+                            return '<td>' + y + '</td>'
+                        }).reduce((a, b) => a + b) +
+                        '</tr>'
+                })
+        }
+
+        function toInfoTable(db, ids) {
+            return ids
+                .map(function(x, i) {
+                    let r = {}
+                    r.stt = i
+                    r.id = x.id
+                    r.ten = x.name
+                    r.kinhDo = db[i].order.lat
+                    r.viDo = db[i].order.long
+                    r.khoiLuong = db[i].order.weight
+                    r.thoiGianLapDat = db[i].order.ServiceTime
+                        .toFixed(1)
+                    r.khungGioNhanHang = db[i].order.timeWindow
+                        .map(x => x.toFixed(1))
+                        .map(x => x + "h")
+                        .join(" - ")
+                    return r
+                })
+                .filter(x => x.stt != 0)
+                .map(function(x, i) {
+                    return '<tr>' +
+                        "<td>" + x.stt + "</td>" +
+                        '<td>' + x.id + '</td>' +
+                        '<td>' + x.ten + '</td>' +
+                        '<td>' + x.kinhDo + '</td>' +
+                        '<td>' + x.viDo + '</td>' +
+                        '<td>' + x.khoiLuong + '</td>' +
+                        '<td>' + x.thoiGianLapDat + '</td>' +
+                        '<td>' + x.khungGioNhanHang + '</td>' +
+                        '</tr>'
+                })
+
+        }
+
+        function showOnInfoTable(tbl, db, ids) {
+
+        }
+
+        function chayThu() {
+            // console.log(main(d3Converter.db))
+            // d3Converter.import(ids, d3Converter.db, d3Converter.getRoutific(main(d3Converter.db)))
+            // draw(d3Converter.getGraphOn(x=>x.id), d3Converter)
+        }
+    </script>
+    <h3>Sơ Lược Dữ Liệu Đầu Váo</h3>
+    <table id="tbl" style="width:100%">
+        <caption style="font-weight: bold; 
+      font-size: 20px;
+      text-decoration: underline;">Bảng thông tin đặt hàng</caption>
+        <tr>
+            <th>STT</th>
+            <th>ID</th>
+            <th>Tên</th>
+            <th>Kinh độ</th>
+            <th>Vĩ độ</th>
+            <th>Khối lượng (kg)</th>
+            <th>Thời gian lắp đặt (h)</th>
+            <th>Giờ có thể nhận hàng</th>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <table id="tblTime" style="width:100%">
+        <caption style="font-weight: bold; 
+      font-size: 20px;
+      text-decoration: underline;">Bảng Thời gian di chuyển giữa các điểm</caption>
+
+    </table>
+    <br>
+    <hr>
+    <h3>Phần Kết Quả chạy thuật toán </h3>
+    <div>
+        <div>Chọn phương thức hiện lộ trình</div>
+        <select onchange="hienThi(this.selectedIndex)">
+      <option value="0">Theo Bảng lộ trình:</option>
+      <option value="1">Theo Graph:</option>
+    </select>
+    </div>
+    <diV style="position: absolute; z-index: 100; display: none;" id="graphOption">
+        <span>Vẽ Graph Theo:</span>
+        <button onclick="drawbyId();">Id</button>
+        <button onclick="drawbyName();">Ten</button>
+    </diV>
+    <div style="display: flex;">
+        <div style="padding: 0px; display: inline-block;">
+            <svg id="d3Graph" width="300" height="200" style="margin: 100px; display:none;"></svg>
+            <div id="tblRoutific"></div>
+        </div>
+        <div>
+            <div style="display: flex; align-items:center;">
+                <h4 style="margin: 5px;"><span>Ví dụ kiểm tra - Tuyến đầu tiên</span>
+                </h4>
+                <div id="crcl" style="padding: 8px;
+                height: 14px;
+                width: 14px;
+                background-color: #bbb;
+                border-radius: 50%;
+                border: 3px solid;
+                display: block;">
+
+                </div>
+
+            </div>
+            <br>
+            <div>
+                <table id="tblOrderEx">
+                    <style>
+                        #tblOrderEx tr :nth-child(4) {
+                            min-width: 140px;
+                        }
+                    </style>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên</th>
+                        <th>KL (kg)</th>
+                        <th>TG lắp đặt (h)</th>
+                        <th>Giờ có thể nhận</th>
+                    </tr>
+                    <caption>Thông tin đặt hàng theo thứ tự giao hàng</caption>
+                </table>
+                <br>
+                <table id="tblOrderDelEx">
+                    <style>
+                        #tblOrderDelEx th,
+                        #tblHanhTrinh th {
+                            min-width: 80px;
+                        }
+                    </style>
+                    <caption>Thời gian di chuyển giữa các điểm</caption>
+                </table>
+                <br>
+                <table id="tblHanhTrinh" style="display: none;">
+                    <caption>Bảng hành trình</caption>
+                    <style>
+                        #tblHanhTrinh td {
+                            text-align: left;
+                            min-width: 150px;
+                        }
+                    </style>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let graphOption = document.getElementById("graphOption")
+        let d3Graph = document.getElementById("d3Graph")
+
+        function hienThi(index) {
+            if (index == 0) {
+                d3Graph.style.display = "none"
+                graphOption.style.display = "none"
+                tblRoutific.style.display = "block"
+                return;
+            }
+
+            d3Graph.style.display = "block"
+            graphOption.style.display = "block"
+            tblRoutific.style.display = "none"
+
+        }
+    </script>
+
+    <script src="FileSaver.js"></script>
+    <script src="vrp.js"></script>
+    <script src="https://unpkg.com/rxjs/bundles/rxjs.umd.min.js"></script>
+    <script src="vrpTest.js"></script>
+    <script src="routeGraphic.js"></script>
+    <script>
+        let tbl = document.getElementById("tbl")
+        let tblTime = document.getElementById("tblTime")
+        let crcl = document.getElementById("crcl")
+        let tblOrderEx = document.getElementById("tblOrderEx")
+        let tblOrderDelEx = document.getElementById("tblOrderDelEx")
+        let tblHanhTrinh = document.getElementById("tblHanhTrinh")
+        let tblRoutific = document.getElementById("tblRoutific")
+    </script>
+    <script>
+        let cars = {
+            "capacity": 20,
+            "numbers": 2,
+            "employees": 5
+        }
+
+        let ids = [{
+            "id": 142205,
+            "name": "Kho"
+        }, {
+            "id": 142188,
+            "name": "Co"
+        }, {
+            "id": 142168,
+            "name": "Trang"
+        }, {
+            "id": 142171,
+            "name": "Thang"
+        }, {
+            "id": 142173,
+            "name": "Cuong"
+        }, {
+            "id": 142186,
+            "name": "Nga"
+        }, {
+            "id": 142796,
+            "name": "Vy"
+        }, {
+            "id": 142179,
+            "name": "Tri"
+        }, {
+            "id": 142198,
+            "name": "Hung"
+        }, {
+            "id": 16901,
+            "name": "Anh Ruy"
+        }, {
+            "id": 1125,
+            "name": "Anh Hieu"
+        }, {
+            "id": 3306,
+            "name": "Anh Tin"
+        }, {
+            "id": 16058,
+            "name": "Chi Xuyen"
+        }, {
+            "id": 17113,
+            "name": "Chi Quyen"
+        }, {
+            "id": 2061,
+            "name": "Chi Thuy"
+        }, {
+            "id": 11653,
+            "name": "Anh Hoan"
+        }]
+    </script>
+
+    <script>
+        //vrp.import(ids, db)
+        //vrp.importStartTime(7)
+        //vrp.importCars(cars)
+        //vrp.find()
+        //console.log(vrp.getRoutes())
+        //console.log(vrp.getTotalDistances())
+    </script>
+
+    <script src="d3.js"></script>
+    <script>
+        //d3Converter.import(ids, db, vrp.getRoutes())
+        //console.log(d3Converter.getNodesOnId())
+        //console.log(d3Converter.getNodesOn(x => x.id +" " + x.name))
+        //console.log(d3Converter.getLinks())
+        //console.log(d3Converter.getLinksOn(x=>x.id))
+        //console.log(d3Converter.getGraph())
+    </script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+
+    <script src="d3draw.js"></script>
+
+    <script src="routific.js"></script>
+
+    <script>
+    </script>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        let ajax = (murl) => {
+            return $.ajax({
+                type: 'GET',
+                url: murl,
+                dataType: 'json'
+            });
+        }
+
+        ajax("https://mwg-vrp.herokuapp.com/create/random/vehicles")
+            .then(async data => data.data)
+            .then(async db => db.map(item => {
+                let x = {}
+                x.id = item.id
+                x.distances = item.distances
+                x.timetravels = item.timeTravels
+
+                let order = {}
+                order.weight = item.order.weight
+                order.long = item.order.long
+                order.lat = item.order.lat
+                order.ServiceTime = item.order.serviceTime
+                order.timeWindow = item.order.timeWindow
+
+                x.order = order
+                return x;
+            }))
+            .then(db => {
+                // vrp.import(ids, db)
+                // vrp.importStartTime(7)
+                // vrp.importCars(cars)
+                // vrp.find()
+                // console.log(vrp.getRoutes())
+                // console.log(vrp.getServiceTimes())
+                // console.log(vrp.db)
+                //console.log(db)
+                //let routes = d3Converter.getRoutific(main(db))
+
+                //console.log(routes)
+                //d3Converter.import(ids, db, routes)
+
+
+                console.log(db)
+                let routes = d3Converter.getRoutific(main(db))
+                console.log(routes)
+                d3Converter.import(ids, db, routes)
+                console.log(d3Converter.db)
+                drawbyName()
+
+                let infoTable = toInfoTable(db, ids)
+                infoTable.forEach(x => tbl.innerHTML += x)
+
+
+                tblTime.innerHTML += '<th>ID Khách/Kho</th>' +
+                    ids.map(function(x, i) {
+                        if (i == 0)
+                            return '<th>' + 'Kho' + '</th>'
+                        return '<th>' + x.id + '</th>'
+                    })
+                    .reduce((a, b) => a + b)
+
+                let travelTable = toTravelTable(db, ids)
+                travelTable.forEach(x => tblTime.innerHTML += x)
+
+                crcl.style.backgroundColor = d3Converter.getNodeColorOnGroup(3)
+
+                let routeExample = routes[1]
+                    .filter(x => x != 0)
+
+                let dataOnOrderInfoEx = routeExample
+                    .map(function(x, i) {
+                        let index = x
+
+                        let r = {}
+                        r.stt = i + 1
+                        r.ten = ids[x].name
+                        r.khoiLuong = db[index].order.weight
+                        r.thoiGianLapDat = db[index].order.ServiceTime
+                            .toFixed(1)
+                        r.khungGioNhanHang = db[index].order.timeWindow
+                            .map(x => x.toFixed(1))
+                            .map(x => x + "h")
+                            .join(" - ")
+                        return r
+                    })
+                    .map(function(x, i) {
+                        return '<tr>' +
+                            "<td>" + x.stt + "</td>" +
+                            '<td>' + x.ten + '</td>' +
+                            '<td>' + x.khoiLuong + '</td>' +
+                            '<td>' + x.thoiGianLapDat + '</td>' +
+                            '<td>' + x.khungGioNhanHang + '</td>' +
+                            '</tr>'
+                    })
+
+                dataOnOrderInfoEx.forEach(x => tblOrderEx.innerHTML += x)
+
+
+                let routeExTemp = routes[1]
+                    .filter(function(x, i) {
+                        if (i < routes[1].length - 1)
+                            return true
+                        return false
+                    })
+
+                let points = routeExTemp
+                    .map(function(x, i) {
+                        let index = x
+                        let r = {}
+                        r.ten = ids[x].name
+                        return r;
+                    })
+
+                tblOrderDelEx.innerHTML += '<th>Tên</th>' +
+                    points
+                    .map(function(x, i) {
+                        return '<th>' + x.ten + '</th>'
+                    })
+                    .reduce((a, b) => a + b)
+
+
+                let dataOnTblTTex = routeExTemp
+                    .map(function(x, i) {
+                        return routeExTemp.map(y => db[x].timetravels[y])
+                    })
+                    .map(x => {
+                        return x.map(y => '<td>' + y + '</td>')
+                            .reduce((a, b) => a + b)
+                    })
+                    .map(function(x, i) {
+                        let tagName = '<th>' + points[i].ten + '</th>'
+                        return '<tr>' + tagName + x + '</tr>'
+                    })
+
+
+                dataOnTblTTex.forEach(x => tblOrderDelEx.innerHTML += x)
+
+                //
+                tblHanhTrinh.innerHTML +=
+                    points
+                    .map(function(x, i) {
+                        return '<th>' + x.ten + '</th>'
+                    })
+                    .reduce((a, b) => a + b)
+
+
+                //
+                let serviceTimes = routeExTemp
+                    .filter(x => x != 0)
+                    .map(x => db[x].order.ServiceTime)
+
+                let timeWindows = routeExTemp
+                    .filter(x => x != 0)
+                    .map(x => db[x].order.timeWindow)
+
+                let timeTravles = routeExTemp
+                    .map(function(x, i) {
+                        if (i == routeExTemp.length - 1)
+                            return -1;
+                        return db[x].timetravels[routeExTemp[i + 1]]
+                    })
+                    .filter(x => x != -1)
+
+                //console.log(serviceTimes)
+                //console.log(timeWindows)
+                let timeTravelsNoDepot = timeTravles.filter(function(x, i) {
+                    if (i == 0)
+                        return false
+                    return true
+                })
+                console.log(vrpTest.getThoiDiemDenDiemCuoiCung(
+                    timeWindows,
+                    serviceTimes,
+                    timeTravelsNoDepot
+                ))
+
+                let dataOnTblHanhTrinh = '';
+
+                let strt = {}
+                strt.gioKhoiHanh = vrpTest.getThoiDiemDiNenBatDau(timeWindows, serviceTimes, timeTravles)
+                strt.thoiGianDiChuyen = db[routeExTemp[0]].timetravels[routeExTemp[1]]
+
+                strt.thoiGianPV = 0;
+                strt.gioDenNoi = strt.gioKhoiHanh + strt.thoiGianDiChuyen
+                dataOnTblHanhTrinh += '<td>' + '<div>' +
+                    '<div>' + 'Giờ Khởi Hành: ' + strt.gioKhoiHanh.toFixed(1) + '</div>' +
+                    '<div>' + 'Thời Gian Di Chuyển: ' + strt.thoiGianDiChuyen.toFixed(2) + '</div>' +
+                    '<div>' + 'Giờ Đến Nơi: ' + strt.gioDenNoi.toFixed(1) + '</div>' +
+                    '</div>' + '</td>'
+
+
+
+
+
+                for (let i = 1; i <= routeExTemp.length - 1; i++) {
+                    let txt = '<div>' + 'Giờ Đến: ' + strt.gioDenNoi.toFixed(1) + '</div>'
+                    txt += '<div>' + 'Giờ Phục vụ: ' + db[routeExTemp[i]].order.ServiceTime.toFixed(2) + '</div>'
+                    if (i != routeExTemp.length - 1) {
+                        txt += '<div>' + 'Giờ Khởi Hành: ' + (strt.gioDenNoi + db[routeExTemp[i]].order.ServiceTime).toFixed(1) + '</div>'
+                        txt += '<div>' + 'Thời Gian Di Chuyển: ' + db[routeExTemp[i]].timetravels[routeExTemp[i + 1]] + '</div>'
+                        txt += '<div>' + 'Giờ Đến Nơi: ' + (strt.gioDenNoi +
+                            db[routeExTemp[i]].order.ServiceTime +
+                            db[routeExTemp[i - 1]].timetravels[routeExTemp[i]]).toFixed(1) + '</div>'
+                        strt.thoiGianDiChuyen = db[routeExTemp[i]].timetravels[routeExTemp[i + 1]]
+                        strt.gioKhoiHanh = strt.gioDenNoi + db[routeExTemp[i]].order.ServiceTime
+                        strt.gioDenNoi = strt.gioKhoiHanh + strt.thoiGianDiChuyen
+                    }
+
+                    strt.thoiGianPV = db[routeExTemp[i]].order.ServiceTime
+
+                    dataOnTblHanhTrinh += '<td>' + '<div>' +
+                        txt +
+                        '</div>' + '</td>'
+
+
+                }
+
+                tblHanhTrinh.innerHTML += dataOnTblHanhTrinh
+
+                routific.import(vrpTest, db, ids, routes)
+                    //console.log()
+                let rtf = routific.getRoutific()
+                console.log(rtf)
+                grp.importColors(d3Converter.scheme)
+                grp.importData(ids, db, routes, rtf)
+                grp.importGraphic(tblRoutific)
+
+
+                for (let i = 0; i < routes.length; i++) {
+                    grp.drawRoute(i)
+                }
+                //grp.drawRoute(1)
+                //console.log([].reduce((a,b)=> a+b))
+                //console.log(grp.getGraphicData())
+            })
+
+
+        function runMain(db) {
+            return new Promise(resolve => {
+                resolve(main(db))
+            })
+        }
+    </script>
+
+
+    <script>
+        function download(content, fileName, contentType) {
+            var a = document.createElement("a");
+            var file = new Blob([content], {
+                type: contentType
+            });
+            a.href = URL.createObjectURL(file);
+            a.download = fileName;
+            a.click();
+        }
+    </script>
+
+    <script>
+        const findNextPoint = (arr, arrayTempt, orders1) => {
+            let shortestWay = Number.MAX_VALUE;
+            let lastIndex = arr[arr.length - 1];
+            let distances = orders1[lastIndex].distances;
+            let nextIndex;
+
+            distances.forEach((e, index) => {
+                if (arr.indexOf(index) < 0 && e < shortestWay && arrayTempt.indexOf(index) < 0) {
+                    shortestWay = e;
+                    nextIndex = index;
+                }
+            });
+
+            return nextIndex;
+        };
+
+
+
+        const calIndexPoint = (arr) => {
+            return arr.length;
+        };
+
+        const funcGetLocation = (arr) => {
+            let routeLocation = [];
+            arr.forEach((e) => {
+                const long = orders[e].order.long;
+                const lat = orders[e].order.lat;
+                routeLocation.push([long, lat]);
+            });
+            return routeLocation;
+        };
+
+        const funcIndexRoute = (firstId, capacity, time, orders1) => {
+            let routeIndex = [];
+            let routeTempt = [];
+            let runWhile = true;
+            let cargoVolume = 0;
+            let totalTimeTravel = 0;
+            let arrayTempt = [];
+            let arraytime = orders1[0].order.timeWindow;
+            // console.log("hihihihi",hihi);
+            let count = 0;
+            let firstIndex = orders1.findIndex((e) => e.id === firstId);
+            routeIndex.push(firstIndex);
+
+            while (runWhile) {
+                let nextIndex = findNextPoint(routeIndex, arrayTempt, orders1);
+
+                if (nextIndex) {
+                    function funcHandleConditions() {
+                        if (time) {
+
+                            const timeTravle = Math.round((orders1[nextIndex].timetravels[routeIndex[routeIndex.length - 1]]) * 100) / 100;;
+                            const timeService =
+                                Math.round((orders1[nextIndex].order["ServiceTime"]) * 100) / 100;
+                            let indexATimewindows = Math.round((orders1[nextIndex].order["timeWindow"][0] + timeService) * 100) / 100;
+
+
+                            let indexBTimewindows =
+                                Math.round((orders1[nextIndex].order["timeWindow"][1] + timeService) * 100) / 100;;
+                            let indexCTimewindows =
+                                Math.round((orders1[nextIndex].order["timeWindow"][0]) * 100) / 100;;
+                            let indexDTimewindows =
+                                Math.round((orders1[nextIndex].order["timeWindow"][1]) * 100) / 100;
+
+
+                            let a = Math.round((arraytime[0] + timeTravle) * 100) / 100;
+                            let b = Math.round((arraytime[1] - timeTravle) * 100) / 100;
+                            let c = 0.00;
+                            let d = 0.00;
+                            if (a > indexCTimewindows) {
+                                c = Math.round((a + timeService) * 100) / 100;;
+
+                            } else {
+
+                                c = indexATimewindows;
+
+                            }
+                            if (b < indexDTimewindows) {
+                                d = Math.round((b + timeService) * 100) / 100;;
+                            } else {
+                                d = indexBTimewindows;
+                            }
+
+
+                            if ((a > indexCTimewindows && a > indexDTimewindows) || (b < indexCTimewindows && b < indexDTimewindows)) {
+
+                                arrayTempt.push(nextIndex);
+                                const lastIndexRouter = routeIndex[routeIndex.length - 1];
+
+                                const result = routeIndex.filter(x => x != 0);
+                                if (arrayTempt.length + result.length === orders1.length - 1) {
+                                    if (lastIndexRouter === 0) {
+                                        runWhile = false;
+                                    }
+
+
+                                    routeIndex.push(0);
+                                    arrayTempt = [];
+                                    nextIndex = firstIndex;
+                                    totalTimeTravel = 0;
+                                    cargoVolume = 0;
+
+                                    arraytime = orders1[0].order.timeWindow;
+                                }
+
+                            } else {
+                                if (capacity) {
+                                    const orderWeight = orders1[nextIndex].order.weight;
+                                    cargoVolume += orderWeight;
+
+                                    if (cargoVolume > capacity) {
+                                        routeIndex.push(0);
+                                        nextIndex = firstIndex;
+                                        totalTimeTravel = 0;
+                                        cargoVolume = 0;
+
+                                        arrayTempt = [];
+                                        arraytime = orders1[0].order.timeWindow;
+                                    } else {
+                                        routeIndex.push(nextIndex);
+                                        arrayTempt = [];
+                                        if (c > d) {
+
+
+                                            arrayTempt = [];
+                                            routeIndex.push(0);
+
+                                            totalTimeTravel = 0;
+                                            cargoVolume = 0;
+
+                                            arraytime = orders1[0].order.timeWindow;
+                                        } else {
+
+                                            arraytime = [c, d]
+
+                                        }
+
+
+                                    }
+
+                                }
+
+
+                            }
+
+
+                        }
+
+                    }
+
+                    funcHandleConditions();
+                } else {
+                    runWhile = false;
+                    routeIndex.push(0);
+                }
+            }
+
+
+            return routeIndex;
+        };
+
+
+
+
+
+        const main = (orders) => {
+            let orders1 = orders;
+            const routeIndex = funcIndexRoute(142205, 30, 5, orders1);
+            //   let Routific= getRoutific(routeIndex);
+
+
+            return routeIndex
+        };
+    </script>>
+
+    <script>
+        function stopExecutingAfter(timeout, fn) {
+            var stopifAfter = Date.now() + timeout
+            return function() {
+                if (Date.now() > stopIfAfter) return
+                fn.apply(null, arguments)
+            }
+        }
+    </script>
+</body>
+
+</html>

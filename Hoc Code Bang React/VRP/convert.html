@@ -1,0 +1,45 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://unpkg.com/rxjs/bundles/rxjs.umd.min.js"></script>
+<script type="text/javascript">
+    function ajaxCall(murl) {
+        return $.ajax({
+            type: 'GET',
+            url: murl,
+            dataType: 'json'
+        });
+    }
+
+    rxjs.forkJoin(
+        rxjs.from(ajaxCall("id.json")),
+        rxjs.from(ajaxCall("db.json"))
+    )
+    .pipe(
+        rxjs.operators.map(
+            ([customers,orders]) =>{
+
+                let ids = customers.map(x => x.id)
+                let distances = orders.map(x => x.distances)
+                
+
+
+                let combines = distances.map(
+                    dis =>
+                    {
+                        ids.reduce(function(obj, key, index) {
+                        obj[key] = dis[index];
+                        return obj;
+                        }, {});
+                    }
+                )
+
+
+                
+
+                
+                
+                return combines
+            }
+        )
+    )
+    .subscribe(console.log)
+</script>

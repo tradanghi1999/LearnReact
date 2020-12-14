@@ -1,0 +1,196 @@
+{
+  "nodes": [
+    {
+      "id": 142205,
+      "name": "Nghiax",
+      "group": 1
+    },
+    {
+      "id": 142188,
+      "name": "Co",
+      "group": 2
+    },
+    {
+      "id": 142168,
+      "name": "Trang",
+      "group": 3
+    },
+    {
+      "id": 142171,
+      "name": "Thang",
+      "group": 3
+    },
+    {
+      "id": 142173,
+      "name": "Cuong",
+      "group": 3
+    },
+    {
+      "id": 142186,
+      "name": "Nga",
+      "group": 5
+    },
+    {
+      "id": 142169,
+      "name": "Long",
+      "group": 2
+    },
+    {
+      "id": 142179,
+      "name": "Tri",
+      "group": 2
+    },
+    {
+      "id": 142198,
+      "name": "Hung",
+      "group": 5
+    },
+    {
+      "id": 16901,
+      "name": "Anh Ruy",
+      "group": 2
+    },
+    {
+      "id": 1125,
+      "name": "Anh Hieu",
+      "group": 4
+    },
+    {
+      "id": 3306,
+      "name": "Anh Tin",
+      "group": 2
+    },
+    {
+      "id": 16058,
+      "name": "Chi Xuyen",
+      "group": 4
+    },
+    {
+      "id": 17113,
+      "name": "Chi Quyen",
+      "group": 5
+    },
+    {
+      "id": 2061,
+      "name": "Chi Thuy",
+      "group": 2
+    },
+    {
+      "id": 11653,
+      "name": "Anh Hoan",
+      "group": 6
+    },
+    {
+      "id": 70445,
+      "name": "Anh Ky Ky",
+      "group": 2
+    }
+  ],
+  "links": [
+    {
+      "source": 142205,
+      "target": 3306,
+      "value": 5
+    },
+    {
+      "source": 3306,
+      "target": 16901,
+      "value": 5
+    },
+    {
+      "source": 16901,
+      "target": 142179,
+      "value": 5
+    },
+    {
+      "source": 142179,
+      "target": 142169,
+      "value": 5
+    },
+    {
+      "source": 142169,
+      "target": 142188,
+      "value": 5
+    },
+    {
+      "source": 142188,
+      "target": 2061,
+      "value": 5
+    },
+    {
+      "source": 2061,
+      "target": 70445,
+      "value": 5
+    },
+    {
+      "source": 70445,
+      "target": 142205,
+      "value": 30
+    },
+    {
+      "source": 142205,
+      "target": 142171,
+      "value": 10
+    },
+    {
+      "source": 142171,
+      "target": 142168,
+      "value": 5
+    },
+    {
+      "source": 142168,
+      "target": 142173,
+      "value": 10
+    },
+    {
+      "source": 142173,
+      "target": 142205,
+      "value": 17
+    },
+    {
+      "source": 142205,
+      "target": 1125,
+      "value": 10
+    },
+    {
+      "source": 1125,
+      "target": 16058,
+      "value": 7.000000000000001
+    },
+    {
+      "source": 16058,
+      "target": 142205,
+      "value": 21
+    },
+    {
+      "source": 142205,
+      "target": 17113,
+      "value": 14.000000000000002
+    },
+    {
+      "source": 17113,
+      "target": 142186,
+      "value": 5
+    },
+    {
+      "source": 142186,
+      "target": 142198,
+      "value": 11
+    },
+    {
+      "source": 142198,
+      "target": 142205,
+      "value": 24
+    },
+    {
+      "source": 142205,
+      "target": 11653,
+      "value": 14.000000000000002
+    },
+    {
+      "source": 11653,
+      "target": 142205,
+      "value": 14.000000000000002
+    }
+  ]
+}

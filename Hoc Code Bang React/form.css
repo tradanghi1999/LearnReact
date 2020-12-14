@@ -1,0 +1,39 @@
+form{
+    padding: 40px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 10px;
+    background-color: blanchedalmond;
+    margin: 0;
+    display: inline-block;
+    width: 250px;
+}
+
+form span{
+    width: 80px;
+    display: block;
+}
+form div{
+    padding: 2px;
+}
+
+form input{
+    padding: 3px;
+    font-size: 10px;
+    width: 95%;
+}
+
+form div:last-child{
+    display: flex;
+    flex-flow: row-reverse;
+}
+form button{
+    
+    background-color: white;
+    border: none;
+    padding: 3px;
+}
+
+form button:hover
+{
+    background-color: whitesmoke;
+}

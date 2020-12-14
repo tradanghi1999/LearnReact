@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="table.css" />
+    <link rel="stylesheet" href="option.css" />
+    <link rel="stylesheet" href="form.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.6.3/rxjs.umd.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.4.4/babel.js"></script>
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/prop-types@15.6/prop-types.js"> </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/6.3.1/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.0.5/redux.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-redux/7.2.2/react-redux.min.js"></script>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script>
+        let ajax = {
+            getXML(url) {
+                return $.ajax({
+                    url: url,
+                    dataType: "xml"
+                })
+            }
+        }
+
+        let url = 'https://raw.githubusercontent.com/tradanghi1999/BeDumpOnceAndAlways/master/BaiTapLop14_09_2019_K174111261_TranDaiNghia/BaiTapLop14_09_2019_K174111261_TranDaiNghia/Module%206/Bai%2008/Employee.xml'
+
+    </script>
+    <script type="text/babel">
+        const iniState = {
+            isLoading: true,
+            data: null
+        }
+
+
+        const constants = {
+            LOAD_DATA: "LOAD_DATA",
+            ADD_EM: "ADD_EM"
+        }
+
+        const reducer = (
+            state = {
+                isLoading: false,
+                data: null
+            }, action) => {
+            switch (action.type) {
+                case constants.LOAD_DATA:
+                    return {
+                        isLoading: action.isLoading,
+                        data: action.data
+                    }
+                case constants.ADD_EM:
+                    const { data } = state
+                    let em = {
+                        id: (data == null) ? 0 : (data.length + 1),
+                        name: action.name,
+                        title: action.title,
+                        phone: action.phone
+                    }
+                    return {
+                        isLoading: false,
+                        data: [...state.data, em]
+                    }
+                default:
+                    return state
+            }
+        }
+
+
+
+        const store = Redux.createStore(reducer, iniState)
+
+
+        console.log(store.getState())
+
+        //Presentative Componets
+        const CustomerRow = ({ data }) =>
+            <tr>
+                <td>{data.id}</td>
+                <td>{data.title}</td>
+                <td>{data.name}</td>
+                <td>{data.phone}</td>
+            </tr>
+
+        const CustomerTable = ({ rowDatas }) =>
+            <table>
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Nghề</th>
+                        <th>Tên</th>
+                        <th>Số Điện Thoại</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        rowDatas.map(function (x, i) {
+                            return (
+                                <CustomerRow
+                                    key={i + 1}
+                                    data={x}
+                                />
+                            )
+
+                        })
+                    }
+                </tbody>
+            </table>
+
+        const AddEmployee = ({ store }) => {
+            let _name, _title, _phone;
+            const validate = (name, title, phone) => {
+                if (name.length < 9)
+                    return false
+                if (title.length < 3)
+                    return false
+
+                return true
+            }
+            return (
+                <form>
+                    <div><span>Name:</span><input ref={input => _name = input} type="text" required /></div>
+                    <div><span>Title:</span><input ref={input => _title = input} type="text" required /></div>
+                    <div><span>Phone:</span><input ref={input => _phone = input} type="text" required /></div>
+                    <div><button onClick={
+                        (e) => {
+                            e.preventDefault()
+                            if (validate(_name.value, _title.value, _phone.value)) {
+                                console.log("OK")
+                                let action = {
+                                    type: constants.ADD_EM,
+                                    name: _name.value,
+                                    title: _title.value,
+                                    phone: _phone.value
+                                }
+                                store.dispatch(action)
+                            }
+                            else
+                                console.log("Error")
+                        }
+                    }>Add</button></div>
+                </form>
+            )
+        }
+
+
+
+        // State Component
+        const App = ({ state }) =>
+            (state.isLoading) ?
+                (
+                    <React.Fragment>
+                        <img src="https://raw.githubusercontent.com/tradanghi1999/LearnReact/main/Hoc%20Code%20Bang%20React/loading.svg" />
+                    </React.Fragment>
+                ) :
+                (
+                    <React.Fragment>
+                        <CustomerTable
+                            rowDatas={state.data}
+                        />
+                        <AddEmployee store={store}/>
+                    </React.Fragment>
+                )
+
+        const render = () => {
+            ReactDOM.render(
+                <App state={store.getState()} />,
+                document.getElementById("root")
+            )
+        }
+
+        store.subscribe(render)
+        rxjs.from(ajax.getXML(url))
+            .pipe(
+                rxjs.operators.map(xml => xml.getElementsByTagName("Employee")),
+                rxjs.operators.map(xmls => {
+                    let items = []
+                    for (let i = 0; i < xmls.length; i++) {
+                        items.push({
+                            id: xmls[i].attributes['id'].value,
+                            title: xmls[i].attributes['title'].value,
+                            name: xmls[i].children[0].innerHTML,
+                            phone: xmls[i].children[1].innerHTML
+                        })
+                    }
+                    return items
+                })
+            )
+            .subscribe(data => {
+                const unique = (value, index, self) => {
+                    return self.indexOf(value) === index
+                }
+                let types = data.map(x => x.title)
+                    .filter(unique)
+                let action = {
+                    type: constants.LOAD_DATA,
+                    isLoading: false,
+                    data
+                }
+                store.dispatch(action)
+            })
+        render()
+    </script>
+</body>
+
+</html>

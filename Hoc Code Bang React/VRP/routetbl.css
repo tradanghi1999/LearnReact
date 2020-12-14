@@ -1,0 +1,144 @@
+.route {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: scroll;
+    align-items: center;
+    max-width: 600px;
+    z-index: 10000;
+    margin: 40px;
+
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.route::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #F5F5F5;
+}
+
+.route::-webkit-scrollbar {
+    height: 6px;
+    background-color: #F5F5F5;
+}
+
+.route::-webkit-scrollbar-thumb {
+    background-color: #000000;
+}
+
+.routeName {
+    font-weight: 600;
+    font-size: 18x;
+    padding: 10px;
+    min-width: 70px;
+}
+
+.depotWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.depotName,
+.cusName {
+    padding: 5px;
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Old versions of Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.depot,
+.cus {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid black;
+    box-shadow: 1px 3px rgb(133, 131, 131);
+}
+
+.timeWrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.time {
+    padding: 15px;
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Old versions of Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.link {
+    display: flex;
+    justify-content: center;
+    width: 100px;
+    height: 20px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid black;
+    align-self: center;
+}
+
+.link span {
+    padding: 0 5px;
+}
+
+.customerWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 -28px;
+}
+
+
+/* Phần Icon */
+.arrive, .leave {
+    display: flex;
+    align-items: flex-end;
+}
+
+
+
+.truck{
+    z-index: 100;
+    text-shadow: 1px 1px gray;    
+    font-size: 0.5rem;
+}
+.home
+{
+    font-size: 1rem;
+    
+}
+.arrive .truck
+{
+    color: red;
+}
+.leave .truck
+{
+    color: green;
+}
+.meta-text{
+    font-size: 12px;
+    font-style: italic;
+}

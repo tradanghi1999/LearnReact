@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"/>
+        <link rel="stylesheet" href="routetbl.css">
+        <script src="routeGraphic.js"></script>
+    </head>
+    <body>
+        <div id="routeTbl"></div>
+        <!--<div class="route">
+            <div class="depotWrapper">
+                <div class="depotName">Kho</div>
+                <div class="depot">0h</div>
+                <div class="timeWrapper">
+                    <div class="time">16h</div>
+                </div>
+            </div>
+            <div
+                class="link"
+            ><i class="fas fa-shuttle-van"></i>: 3h</div>
+            <div class="customerWrapper">
+                <div class="cusName">Anh Hiếu</div>
+                <div class="cus"
+                >3.4h</div>
+                <div class="timeWrapper">
+                    <div class="time">19h</div>
+                    <div class="time">21h</div>  
+                </div>
+            </div>
+        </div>-->
+    </body>
+    <script>
+        let depotData = {
+            name : "Kho",
+            startTime : "9h"
+        }
+        let depotColor = "#abc"
+
+        let linkData ={
+            timeTravel :"3h"
+        }
+
+        let cusData ={
+            name:"Anh Hiếu",
+            serviceTime: "3h",
+            startTime: "19h",
+            endTime: "21h" 
+        }
+
+        let cusColor = "#bcd"
+        let routeData = {
+            name: "Tuyến 1"
+        }
+
+        let routeGrp = grp.createRoute()
+        let depotGrp = grp.createDepot(depotData,depotColor)
+        let linkGrp = grp.createLink(linkData)
+        let cusGrp = grp.createCustomer(cusData, cusColor)
+        let routeNameGrp = grp.createRouteName(routeData)
+
+        //grp
+        let routeTbl = document.getElementById("routeTbl")
+        //attach
+        routeGrp.appendChild(routeNameGrp)
+        routeGrp.appendChild(depotGrp)
+        routeGrp.appendChild(linkGrp)
+        routeGrp.appendChild(cusGrp)
+        routeTbl.appendChild(routeGrp)
+        
+        
+    </script>
+</html>

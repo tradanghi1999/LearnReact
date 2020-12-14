@@ -1,0 +1,32 @@
+#tblTravel{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#tblTravel caption{
+    font-style: italic;
+}
+#tblTravel caption span{
+    text-decoration: underline;
+}
+
+#tblTravel th{
+    max-width: 70px;
+}
+#tblTravel td{
+    height: 50px;
+    width: 50px;
+     text-align: center;
+    vertical-align: center;
+}
+
+#tblTravel tr td:nth-child(2),
+#tblTravel tbody tr:nth-child(1) td
+{
+    background-color: blanchedalmond;
+    font-weight: 600;
+}
+
+#tblTravel .cross{
+    background-color: blanchedalmond;
+    font-weight: 600;
+}

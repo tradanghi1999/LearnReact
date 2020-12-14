@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="table.css" />
+    <link rel="stylesheet" href="option.css" />
+    <title> React Employee </title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.6.3/rxjs.umd.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.4.4/babel.js"></script>
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/prop-types@15.6/prop-types.js"> </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/6.3.1/d3.min.js"></script>
+
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script>
+        let ajax = {
+            getXML(url) {
+                return $.ajax({
+                    url: url,
+                    dataType: "xml"
+                })
+            },
+            getJson(url) {
+                return $.ajax({
+                    url: url,
+                    dataType: "json"
+                })
+            }
+        }
+    </script>
+    <script type="text/babel">
+        const PeopleList = ({ data }) =>
+            <ol className="people-list">
+                {data.results.map((person, i) => {
+                    const { first, last } = person.name
+                    return <li key={i}>{first} {last}</li>
+                })}
+            </ol>
+
+        const DataComponent = (ComposedComponent, url) =>
+            class DataComponent extends React.Component {
+                constructor(props) {
+                    super(props)
+                    this.state = {
+                        data: [],
+                        loading: false,
+                        loaded: false
+                    }
+                }
+
+                componentWillMount() {
+                    this.setState({ loading: true })
+                    ajax.getJson(url)
+                        .then(data => this.setState({
+                            loaded: true,
+                            loading: false,
+                            data
+                        }))
+                }
+
+                render() {
+                    return (
+                        <div className="data-component">
+                            {
+                                (this.state.loading) ?
+                                    <div>loading...</div> :
+                                    <ComposedComponent {...this.state}
+                                        {...this.props} />
+                            }
+                        </div>
+                    )
+                }
+            }
+
+        const RandomMeUsers = DataComponent(
+            PeopleList,
+            "https://randomuser.me/api/?results=10"
+        )
+
+
+        const CountryNames = ({ data, selected = '' }) =>
+            <select className='people-list' defaultValue={selected}>
+                {
+                    data.map(
+                        ({ name }, i) =>
+                            <option key={i} value={name}>{name}</option>
+                    )
+                }
+            </select>
+
+        const CountryDropDown = DataComponent(
+            CountryNames,
+            "https://restcountries.eu/rest/v1/all"
+
+        )
+
+        const Expandable = ComposedComponent =>
+            class Expandable extends React.Component {
+                constructor(props) {
+                    super(props)
+                    const collapsed =
+                        (props.hidden && props.hidden === true) ?
+                            true :
+                            false
+                    this.state = { collapsed }
+                    this.expandCollapse = this.expandCollapse.bind(this)
+                }
+                expandCollapse() {
+                    let collapsed = !this.state.collapsed
+                    this.setState({ collapsed })
+                }
+                render() {
+                    return <ComposedComponent
+                        expandCollapse={this.expandCollapse}
+                        {...this.state}
+                        {...this.props} />
+                }
+            }
+
+
+        ReactDOM.render(
+            <React.Fragment>
+                <RandomMeUsers />
+                <CountryDropDown selected="United_States" />
+            </React.Fragment>,
+            document.getElementById('root')
+        )
+    </script>
+</body>
+
+</html>

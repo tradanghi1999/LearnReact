@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="routetbl.css" />
+    <link rel="stylesheet" href="tblInfo.css" />
+    <link rel="stylesheet" href="tblTravel.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+
+    <!-- Libs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="d3.js"></script>
+    <!-- Data -->
+    <script src="ajax.js"></script>
+    <script src="ids.js"></script>
+    <script src="vehicles.js"></script>
+    <script src="drivers.js"></script>
+    <!--Cal  -->
+    <script src="vrpTest.js"></script>
+    <script src="vrp_thang.js"></script>
+    <script src="routific.js"></script>
+    <!-- Graphic -->
+    <script src="tbl.js"></script>
+    <script src="routeGraphic.js"></script>
+    <script src="d3draw.js"></script>
+
+    <!-- Style -->
+    <style>
+        .db {
+            display: flex;
+            justify-content: space-evenly;
+        }
+
+        .arrive,
+        .leave {
+            display: none;
+        }
+
+
+        #tblRoute {
+            width: 100%;
+            padding:100px 40px ;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            
+        }
+
+        #tblRoute > div:nth-child(1){
+            padding: 0 50px;
+            font-style: italic;
+        }
+        #tblRoute > div:nth-child(1) span{
+            text-decoration: underline;
+        }
+
+        .cus {
+            text-indent: -1000em;
+        }
+
+        .route
+        {
+            max-width: 1000px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="db">
+        <div id="tblInfo">
+            <div>
+                <div>Số xe hiện có: <span>2</span></div>
+                <div>Trọng tải mỗi xe (kg): <span>30</span></div>
+            </div>
+        </div>
+        <div id="tblTravel">
+            <div>
+                <div>&nbsp;</div>
+                <div>&nbsp;</div>
+                <div>&nbsp;</div>
+                <div>&nbsp;</div>
+            </div>
+        </div>
+    </div>
+    <div id="tblRoute">
+        <div><span>Bảng 3</span>: Kết Quả Định Tuyến</div>
+    </div>
+    <script>
+        let tblInfo = document.getElementById("tblInfo")
+        let tblTravel = document.getElementById("tblTravel")
+        let tblRoute = document.getElementById("tblRoute")
+        let url = "https://mwg-vrp.herokuapp.com/create/constant/motor"
+        ajax.getDb(url)
+            .then(db => {
+                //tablize.importData(db, ids)
+                let dids = ids.filter(function (x, i) {
+                    if (i > 9)
+                        return false
+                    return true
+                })
+                let tbl = tablize.createInfoTable()
+                let infos = tablize.toInfoDataOnTable(db, dids)
+                infos.forEach(x => tbl.tbody.appendChild(x))
+                tblInfo.appendChild(tbl.table)
+
+                let tblTT = tablize.createTimeTable(db)
+                let tts = tablize.toTravelTable(db, ids)
+                tts.forEach(tt => tblTT.tbody.appendChild(tt))
+                tblTravel.appendChild(tblTT.table)
+
+                let colors = d3.schemeCategory20
+
+
+                vrp_thang.import(db, ids, vehicles)
+                let routes = vrp_thang.run()
+
+                routific.import(vrpTest, db, ids, routes)
+                let rtf = routific.getRoutific()
+
+
+                console.log(grp)
+                grp.importColors(colors)
+                grp.importData(ids, db, routes, rtf)
+                grp.importGraphic(tblRoute)
+                for (let i = 0; i < routes.length; i++) {
+                    grp.drawRoute(i)
+                }
+
+
+                //console.log(routes)
+
+            })
+    </script>
+    <!--Icon-->
+    <script src="https://friconix.com/cdn/friconix.js"> </script>
+</body>
+
+</html>

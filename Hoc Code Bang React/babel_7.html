@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="table.css" />
+    <link rel="stylesheet" href="option.css" />
+    <link rel="stylesheet" href="form.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.6.3/rxjs.umd.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.12.10/babel.min.js"></script>
+    <!-- <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script> -->
+    <script src="https://unpkg.com/prop-types@15.6/prop-types.js"> </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/6.3.1/d3.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.0.5/redux.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-redux/7.2.2/react-redux.min.js"></script> -->
+    <script>
+        Babel.registerPreset("my-preset", {
+            presets: [
+                [Babel.availablePresets["es2015"], { "modules": false }],
+                [Babel.availablePresets["react"]]
+
+            ],
+            plugins: [
+                [Babel.availablePlugins["transform-modules-umd"]]
+            ],
+            moduleId: "main"
+        });
+    </script>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script data-plugins="transform-modules-umd" type="text/babel">
+    </script>
+    <script type="text/babel" data-presets="my-preset">
+        import App from './app'
+        console.log(App)
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,64 @@
+#tblInfo {
+    padding: 20px;
+    cursor: text;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+#tblInfo div
+{
+    font-weight: 600;
+}
+#tblInfo caption
+{
+    font-style: italic;
+    padding: 5px;
+    
+}#tblInfo caption span
+{
+    text-decoration: underline;
+}
+
+#tblInfo table {
+    border-collapse: collapse;
+    
+}
+
+#tblInfo td,
+#tblInfo th {
+    padding: 10px 15px;
+    border-bottom: 1px solid black;
+}
+
+#tblInfo th {
+    background-color: blanchedalmond;
+}
+
+#tblInfo tr:nth-child(2n) {
+    background-color: whitesmoke;
+}
+
+
+#tblInfo td:nth-child(8n+4),
+#tblInfo td:nth-child(8n+5),
+#tblInfo td:nth-child(8n+7),
+#tblInfo th:nth-child(8n+4),
+#tblInfo th:nth-child(8n+5),
+#tblInfo th:nth-child(8n+7) {
+    display: none;
+}
+
+#tblInfo td:nth-child(1),
+#tblInfo th:nth-child(1),
+#tblInfo td:nth-child(2),
+#tblInfo th:nth-child(2),
+#tblInfo td:nth-child(6),
+#tblInfo th:nth-child(6) {
+    min-width: 0;
+    text-align: right;
+}
+
+#tblInfo td:nth-child(3),
+#tblInfo th:nth-child(3),
+#tblInfo td:nth-child(8),
+#tblInfo th:nth-child(8) {
+    text-align: center;
+}

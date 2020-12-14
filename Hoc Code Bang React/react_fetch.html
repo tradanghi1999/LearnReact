@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="table.css" />
+    <link rel="stylesheet" href="option.css" />
+    <title> React Employee </title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.6.3/rxjs.umd.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.4.4/babel.js"></script>
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/prop-types@15.6/prop-types.js"> </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/6.3.1/d3.min.js"></script>
+
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script>
+        let ajax = {
+            getXML(url) {
+                return $.ajax({
+                    url: url,
+                    dataType: "xml"
+                })
+            },
+            getJson(url) {
+                return $.ajax({
+                    url: url,
+                    dataType: "json"
+                })
+            }
+        }
+    </script>
+    <script type="text/babel">
+        class PeopleList extends React.Component {
+
+            constructor(props) {
+                super(props)
+                this.state = {
+                    data: [],
+                    loaded: false,
+                    loading: false
+                }
+                
+            }
+
+            componentWillMount() {
+                this.setState({ loading: true })
+                ajax.getJson('https://randomuser.me/api/?results=10')
+                    .then(obj => obj.results)
+                    .then(data => this.setState({
+                        loaded: true,
+                        loading: false,
+                        data
+                    }))
+            }
+
+            render() {
+                const { data, loading, loaded } = this.state
+                return (loading) ?
+                    <div>Loading...</div> :
+                    <ol className="people-list">
+                        {data.map((person, i) => {
+                            const { first, last } = person.name
+                            return <li key={i}>{first} {last}</li>
+                        })}
+                    </ol>
+            }
+        }
+        ReactDOM.render(
+            <PeopleList />,
+            document.getElementById('root')
+        )
+    </script>
+</body>
+
+</html>

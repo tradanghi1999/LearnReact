@@ -49,10 +49,19 @@
 
     </script>
     <!-- <script src="index.js" type="text/babel" data-type="module">     -->
+
+    <script>
+        
+    </script>
     <script type="text/babel" src="./app.js" data-plugins="transform-modules-umd"></script>
     <script type="text/babel" data-presets="my-preset">
         import App from "./app"
-        ReactDOM.render(<App />, document.getElementById("root"))
+        
+        let data = {
+            ajax: ajax,
+            rxjs: rxjs
+        }
+        ReactDOM.render(<App data={data}/>, document.getElementById("root"))
         //ReactDOM.render(<CustomerRow id='hi'/>, document.getElementById("root"));
     </script>
 
